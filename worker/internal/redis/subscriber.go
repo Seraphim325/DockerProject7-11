@@ -2,49 +2,28 @@ package redis
 
 import (
 	"context"
-	"log"
-	"strconv"
-	"strings"
-	"time"
-
-	"worker/internal/helper"
 
 	"github.com/redis/go-redis/v9"
 )
 
-const (
-	prefix = "index:"
-)
+type Subscriber struct {
+	pubsub *redis.PubSub
+}
 
-func Subscribe(ctx context.Context, client *redis.Client) {
-	pubsub := client.PSubscribe(ctx, "__keyevent@0__:set", "__keyevent@0__:hset")
-	defer pubsub.Close()
+func NewSubscriber(ctx context.Context, client *redis.Client, channels ...string) (*Subscriber, error) {
+	pubsub := client.PSubscribe(ctx, channels...)
 
 	if _, err := pubsub.Receive(ctx); err != nil {
-		log.Fatalf("Failed to subscribe to redis channel: %s\n", err)
+		return nil, err
 	}
 
-	msgCh := pubsub.Channel()
+	return &Subscriber{pubsub: pubsub}, nil
+}
 
-	for msg := range msgCh {
-		key := msg.Payload
-		if !strings.HasPrefix(key, prefix) {
-			continue
-		}
+func (s *Subscriber) Messages() <-chan *redis.Message {
+	return s.pubsub.Channel()
+}
 
-		if _, err := client.Del(ctx, key).Result(); err != nil {
-			log.Printf("Failed to delete key %s: %s\n", key, err)
-		}
-
-		computedKey := key[6:]
-		computedValue, err := strconv.Atoi(computedKey)
-
-		if err != nil {
-			log.Printf("Failed to convert value %s: %s\n", computedKey, err)
-			continue
-		}
-
-		client.Set(ctx, computedKey, helper.Fib(computedValue), 24*time.Hour)
-
-	}
+func (s *Subscriber) Close() error {
+	return s.pubsub.Close()
 }
