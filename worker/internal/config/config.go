@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	RedisConfig RedisConfig
+	RedisConfig *RedisConfig
 }
 
 type RedisConfig struct {
@@ -31,8 +31,8 @@ func Load() (*Config, error) {
 	}, nil
 }
 
-func loadRedisConfig() RedisConfig {
-	return RedisConfig{
+func loadRedisConfig() *RedisConfig {
+	return &RedisConfig{
 		Addr:        fmt.Sprintf("%s:%s", os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT")),
 		Username:    os.Getenv("REDIS_USERNAME"),
 		Password:    os.Getenv("REDIS_PASSWORD"),
