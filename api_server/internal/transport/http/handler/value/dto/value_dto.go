@@ -3,7 +3,7 @@ package dto
 import "api_server/internal/domain/entity"
 
 type ValueRequestDTO struct {
-	Value int
+	Value int `json:"value"`
 }
 
 func ConvertToValueRequestDTO(val *entity.ValueRequest) ValueRequestDTO {
@@ -13,8 +13,8 @@ func ConvertToValueRequestDTO(val *entity.ValueRequest) ValueRequestDTO {
 }
 
 type ValueResponseDTO struct {
-	Key   string
-	Value string
+	Key   string `json:"key"`
+	Value string `json:"value"`
 }
 
 func ConvertToValueResponseDTO(val *entity.ValueResponse) ValueResponseDTO {

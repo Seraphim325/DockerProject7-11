@@ -10,25 +10,25 @@ import (
 	"gorm.io/gorm"
 )
 
-type gormIndexModel struct {
+type GormIndexModel struct {
 	ID    int64 `gorm:"primaryKey"`
 	Index int   `gorm:"uniqueIndex"`
 }
 
-func (gormIndexModel) TableName() string {
+func (GormIndexModel) TableName() string {
 	return "indexes"
 }
 
-type gormIndexesRepository struct {
+type GormIndexRepository struct {
 	db *gorm.DB
 }
 
-func NewGormIndexesRepository(db *gorm.DB) repository.IndexesRepository {
-	return &gormIndexesRepository{db: db}
+func NewGormIndexRepository(db *gorm.DB) repository.IndexRepository {
+	return &GormIndexRepository{db: db}
 }
 
-func (r *gormIndexesRepository) Save(ctx context.Context, index *entity.Index) error {
-	model := gormIndexModel{
+func (r *GormIndexRepository) Save(ctx context.Context, index *entity.Index) error {
+	model := GormIndexModel{
 		Index: index.Index,
 	}
 
@@ -39,8 +39,8 @@ func (r *gormIndexesRepository) Save(ctx context.Context, index *entity.Index) e
 	return nil
 }
 
-func (r *gormIndexesRepository) GetAll(ctx context.Context) ([]entity.Index, error) {
-	var models []gormIndexModel
+func (r *GormIndexRepository) GetAll(ctx context.Context) ([]entity.Index, error) {
+	var models []GormIndexModel
 	if err := r.db.WithContext(ctx).Find(&models).Error; err != nil {
 		return nil, err
 	}

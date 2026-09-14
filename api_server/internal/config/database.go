@@ -9,7 +9,7 @@ type DatabaseConfig struct {
 	Port     string
 	User     string
 	Password string
-	DBName   string
+	Name     string
 	SSLMode  string
 }
 
@@ -19,7 +19,7 @@ func loadDatabaseConfig() *DatabaseConfig {
 		Port:     os.Getenv("DB_PORT"),
 		User:     os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASSWORD"),
-		DBName:   os.Getenv("DB_NAME"),
+		Name:     os.Getenv("DB_NAME"),
 		SSLMode:  os.Getenv("DB_SSLMODE"),
 	}
 }

@@ -1,4 +1,4 @@
-package api_server
+package main
 
 import (
 	"api_server/internal/config"
@@ -36,6 +36,12 @@ func main() {
 		log.Fatalf("Failed to connect to database: %s\n", err)
 	}
 
+	if err := db.AutoMigrate(
+		&repository.GormIndexModel{},
+	); err != nil {
+		log.Fatalf("Failed to migrate: %s\n", err)
+	}
+
 	indexRepository := repository.NewGormIndexRepository(db)
 	valueRepository := repository.NewValueRepository(client)
 
@@ -46,6 +52,7 @@ func main() {
 
 	router := t_http.NewRouter(handler)
 
+	log.Printf("Running server on port %s \n", conf.AppConfig.Port)
 	http.ListenAndServe(fmt.Sprintf(":%s", conf.AppConfig.Port), router)
 
 }
