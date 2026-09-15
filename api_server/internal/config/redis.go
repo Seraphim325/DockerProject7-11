@@ -15,6 +15,7 @@ type RedisConfig struct {
 	DialTimeout time.Duration
 	Timeout     time.Duration
 	Pattern     string
+	Sentinel    string
 }
 
 func loadRedisConfig() *RedisConfig {
@@ -27,5 +28,6 @@ func loadRedisConfig() *RedisConfig {
 		DialTimeout: 5 * time.Second,
 		Timeout:     3 * time.Second,
 		Pattern:     "index:",
+		Sentinel:    "__NULL__",
 	}
 }

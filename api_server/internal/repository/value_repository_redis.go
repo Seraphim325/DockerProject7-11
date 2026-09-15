@@ -11,21 +11,40 @@ import (
 )
 
 type redisValueRepository struct {
-	client *redis.Client
+	client   *redis.Client
+	prefix   string
+	sentinel string
 }
 
-func NewValueRepository(client *redis.Client) repository.ValueRepository {
-	return &redisValueRepository{client: client}
+type redisValueModel struct {
+	Key   string
+	Value string
 }
 
-func (r *redisValueRepository) Save(ctx context.Context, value *entity.ValueRepositoryRequest) error {
-	err := r.client.Set(ctx, value.Key, value.Value, 24*time.Hour).Err()
+func NewValueRepository(client *redis.Client, prefix string, sentinel string) repository.ValueRepository {
+	return &redisValueRepository{
+		client:   client,
+		prefix:   prefix,
+		sentinel: sentinel,
+	}
+}
 
-	if err != nil {
-		return err
+func (r *redisValueRepository) Save(ctx context.Context, value *entity.ValueRequest) (*entity.ValueResponse, error) {
+	model := redisValueModel{
+		Key:   fmt.Sprintf("%s%d", r.prefix, value.Value),
+		Value: r.sentinel,
 	}
 
-	return nil
+	err := r.client.Set(ctx, model.Key, model.Value, 24*time.Hour).Err()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &entity.ValueResponse{
+		Key:   model.Key,
+		Value: model.Value,
+	}, nil
 }
 
 func (r *redisValueRepository) GetAll(ctx context.Context) ([]entity.ValueResponse, error) {

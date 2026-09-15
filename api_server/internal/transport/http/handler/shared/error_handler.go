@@ -3,6 +3,7 @@ package handler
 import (
 	"api_server/internal/domain"
 	"errors"
+	"log"
 	"net/http"
 )
 
@@ -18,6 +19,7 @@ func mapToResponse(err error) (int, string) {
 }
 
 func Error(w http.ResponseWriter, err error) {
+	log.Println(err)
 	status, message := mapToResponse(err)
 	http.Error(w, message, status)
 }

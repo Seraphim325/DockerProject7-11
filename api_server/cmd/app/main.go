@@ -43,10 +43,10 @@ func main() {
 	}
 
 	indexRepository := repository.NewGormIndexRepository(db)
-	valueRepository := repository.NewValueRepository(client)
+	valueRepository := repository.NewValueRepository(client, conf.RedisConfig.Pattern, conf.RedisConfig.Sentinel)
 
 	indexService := service.NewIndexService(indexRepository)
-	valueService := service.NewValueService(valueRepository, conf.RedisConfig.Pattern)
+	valueService := service.NewValueService(valueRepository)
 
 	handler := handler.NewHandler(indexService, valueService)
 

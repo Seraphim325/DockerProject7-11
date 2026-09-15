@@ -5,20 +5,15 @@ import (
 	"api_server/internal/domain/entity"
 	"api_server/internal/domain/repository"
 	"context"
-	"fmt"
-
-	"github.com/redis/go-redis/v9"
 )
 
 type ValueService struct {
-	repo   repository.ValueRepository
-	prefix string
+	repo repository.ValueRepository
 }
 
-func NewValueService(repo repository.ValueRepository, prefix string) *ValueService {
+func NewValueService(repo repository.ValueRepository) *ValueService {
 	return &ValueService{
-		repo:   repo,
-		prefix: prefix,
+		repo: repo,
 	}
 }
 
@@ -28,17 +23,15 @@ func (s *ValueService) SaveValue(ctx context.Context, val int) (*entity.ValueRes
 		return nil, domain.ErrBigNumber
 	}
 
-	model := &entity.ValueRepositoryRequest{Key: fmt.Sprintf("%s%d", s.prefix, val), Value: redis.Nil}
+	model := &entity.ValueRequest{Value: val}
 
-	err := s.repo.Save(ctx, model)
+	resp, err := s.repo.Save(ctx, model)
 
 	if err != nil {
 		return nil, err
 	}
 
-	response := &entity.ValueResponse{Key: model.Key}
-
-	return response, nil
+	return resp, nil
 }
 
 func (s *ValueService) GetAllValues(ctx context.Context) ([]entity.ValueResponse, error) {

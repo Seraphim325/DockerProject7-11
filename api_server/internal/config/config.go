@@ -1,6 +1,8 @@
 package config
 
 import (
+	"os"
+
 	"github.com/joho/godotenv"
 )
 
@@ -11,8 +13,10 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
-	if err := godotenv.Load(".env"); err != nil {
-		return nil, err
+	if len(os.Args) > 1 && os.Args[1] == ".env.example" {
+		if err := godotenv.Load(".env.example"); err != nil {
+			return nil, err
+		}
 	}
 
 	return &Config{
