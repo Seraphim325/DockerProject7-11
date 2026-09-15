@@ -4,13 +4,7 @@ import (
 	"fmt"
 	"os"
 	"time"
-
-	"github.com/joho/godotenv"
 )
-
-type Config struct {
-	RedisConfig *RedisConfig
-}
 
 type RedisConfig struct {
 	Addr        string
@@ -20,19 +14,8 @@ type RedisConfig struct {
 	MaxRetries  int
 	DialTimeout time.Duration
 	Timeout     time.Duration
-	Prefix      string
-	Channels    []string
-}
-
-func Load() (*Config, error) {
-	if len(os.Args) > 1 && os.Args[1] == ".env.example" {
-		if err := godotenv.Load(".env.example"); err != nil {
-			return nil, err
-		}
-	}
-	return &Config{
-		RedisConfig: loadRedisConfig(),
-	}, nil
+	Pattern     string
+	Sentinel    string
 }
 
 func loadRedisConfig() *RedisConfig {
@@ -44,7 +27,7 @@ func loadRedisConfig() *RedisConfig {
 		MaxRetries:  5,
 		DialTimeout: 5 * time.Second,
 		Timeout:     3 * time.Second,
-		Prefix:      "index:",
-		Channels:    []string{"__keyevent@0__:set", "__keyevent@0__:hset"},
+		Pattern:     "index:",
+		Sentinel:    "__NULL__",
 	}
 }

@@ -54,7 +54,7 @@ func (w *Watcher) handleMessage(ctx context.Context, msg *redis.Message) {
 		log.Printf("Failed to delete key %s: %s\n", content, err)
 	}
 
-	key := content[6:]
+	key := content[len(w.prefix):]
 	keyConverted, err := strconv.Atoi(key)
 
 	if err != nil {

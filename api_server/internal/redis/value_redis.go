@@ -1,8 +1,8 @@
 package redis
 
 import (
+	"api_server/internal/config"
 	"context"
-	"worker/internal/config"
 
 	"github.com/redis/go-redis/v9"
 )
