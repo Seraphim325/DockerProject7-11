@@ -1,9 +1,5 @@
 package config
 
-import (
-	"os"
-)
-
 type DatabaseConfig struct {
 	Host     string
 	Port     string
@@ -13,13 +9,34 @@ type DatabaseConfig struct {
 	SSLMode  string
 }
 
-func loadDatabaseConfig() *DatabaseConfig {
-	return &DatabaseConfig{
-		Host:     os.Getenv("DB_HOST"),
-		Port:     os.Getenv("DB_PORT"),
-		User:     os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
-		Name:     os.Getenv("DB_NAME"),
-		SSLMode:  os.Getenv("DB_SSLMODE"),
+func loadDatabaseConfig() (*DatabaseConfig, error) {
+
+	host, err := requireEnv("DB_HOST")
+	if err != nil {
+		return nil, err
 	}
+
+	user, err := requireEnv("DB_USER")
+	if err != nil {
+		return nil, err
+	}
+
+	password, err := getSecret("DB_PASSWORD")
+	if err != nil {
+		return nil, err
+	}
+
+	name, err := requireEnv("DB_NAME")
+	if err != nil {
+		return nil, err
+	}
+
+	return &DatabaseConfig{
+		Host:     host,
+		Port:     getEnv("DB_PORT", "5432"),
+		User:     user,
+		Password: password,
+		Name:     name,
+		SSLMode:  getEnv("DB_SSLMODE", "disabled"),
+	}, nil
 }

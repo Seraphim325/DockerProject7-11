@@ -1,13 +1,11 @@
 package config
 
-import "os"
-
 type AppConfig struct {
 	Port string
 }
 
-func loadAppConfig() *AppConfig {
+func loadAppConfig() (*AppConfig, error) {
 	return &AppConfig{
-		Port: os.Getenv("SERVER_PORT"),
-	}
+		Port: getEnv("SERVER_PORT", "8080"),
+	}, nil
 }
