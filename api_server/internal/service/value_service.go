@@ -19,7 +19,7 @@ func NewValueService(repo repository.ValueRepository) *ValueService {
 
 func (s *ValueService) SaveValue(ctx context.Context, val int) (*entity.ValueResponse, error) {
 
-	if val > 50 {
+	if val > domain.ThresholdValue {
 		return nil, domain.ErrBigNumber
 	}
 
