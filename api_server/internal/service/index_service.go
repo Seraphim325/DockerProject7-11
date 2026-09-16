@@ -19,7 +19,7 @@ func NewIndexService(repo repository.IndexRepository) *IndexService {
 
 func (s *IndexService) SaveIndex(ctx context.Context, val int) (*entity.Index, error) {
 
-	if val > 50 {
+	if val > domain.ThresholdValue {
 		return nil, domain.ErrBigNumber
 	}
 
